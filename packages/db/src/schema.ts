@@ -2,7 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import { pgTable, primaryKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-
+import type {InferInsertModel} from "drizzle-orm";
 export const Post = pgTable("post", (t) => ({
   id: t.uuid().notNull().primaryKey().defaultRandom(),
   title: t.varchar({ length: 256 }).notNull(),
@@ -78,3 +78,13 @@ export const Session = pgTable("session", (t) => ({
 export const SessionRelations = relations(Session, ({ one }) => ({
   user: one(User, { fields: [Session.userId], references: [User.id] }),
 }));
+
+export const Connection = pgTable("connection", (t) => ({
+  entityUrn: t.varchar({ length: 255 }).notNull().primaryKey(),
+  firstName: t.varchar({ length: 255 }).notNull(),
+  lastName: t.varchar({ length: 255 }).notNull(),
+  headline: t.varchar({ length: 255 }).notNull(),
+  profileUrl: t.varchar({ length: 255 }).notNull(),
+}));
+
+export type Connection = InferInsertModel<typeof Connection>;
