@@ -4,6 +4,8 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 import { Connection } from "../../../db/src/schema";
 
+import { sql } from "drizzle-orm";
+
 export const connectionRouter = createTRPCRouter({
   insertConnection: protectedProcedure
     .input(
@@ -46,6 +48,11 @@ export const connectionRouter = createTRPCRouter({
         message: "Failed to insert connections",
       };
     } 
-  })
+  }),
+
+  countConnections: protectedProcedure.query(async ({ ctx }) => {
+    const count = await ctx.db.select({ count: sql<number>`count(*)` }).from(Connection);
+    return count[0]?.count;
+  }),
     
 });
