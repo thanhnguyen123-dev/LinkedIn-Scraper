@@ -30,7 +30,7 @@
   cd apps/extension
   npm run build
   ```
-- Load unpacked the generated `dist` folder to chrome://extensions
+- Go to chrome://extensions and click "Load unpacked", then find the `dist` folder in `apps/extension`
 - More instructions will be added in the future with more incoming features
   
 
