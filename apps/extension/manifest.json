@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "LinkedIn Connections Scraper",
+    "version": "1.0.0",
+    "action": { "default_popup": "index.html" },
+    "background": {
+        "service_worker": "src/background.ts",
+        "type": "module"
+    },
+    "permissions": [
+        "storage",
+        "cookies",
+        "webRequest"
+    ],
+    "host_permissions": [
+        "https://*.www.linkedin.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["https://www.linkedin.com/*"],
+            "js": ["src/content.tsx"]
+        }
+    ]
+}
