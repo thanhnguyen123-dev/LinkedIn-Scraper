@@ -1,7 +1,9 @@
 # LinkedIn Chrome Extension
 
 ## Tech Stack
-- Next.js, tRPC, TailwindCSS, PostgreSQL, Prisma
+- **Front-end**: Next.js, React, TailwindCSS
+- **Back-end**: tRPC, TypeScript
+- **Database**: Drizzle ORM
 
 ## Description
 - This is a Chrome Extension that can scrape LinkedIn connections from the user
