@@ -9,11 +9,12 @@
     },
     "permissions": [
         "storage",
-        "cookies",
-        "webRequest"
+        "cookies"
     ],
     "host_permissions": [
-        "https://*.www.linkedin.com/*"
+        "https://*.www.linkedin.com/*",
+        "https://localhost:3000/*",
+        "http://localhost:3000/*"
     ],
     "content_scripts": [
         {

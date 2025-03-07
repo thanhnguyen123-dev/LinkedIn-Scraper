@@ -115,6 +115,29 @@ export const fetchConnections = async () => {
   console.log("All Connections:", allConnections);
 };
 
-chrome.runtime.onInstalled.addListener(() => {
-  fetchConnections();
+const pushConnectionsToServer = async (connections: UserInfo[]) => {
+  try {
+    await fetch("http://localhost:3000/api/connections", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ connections }),
+    });
+    console.log("Connections pushed to server");
+  } catch (error) {
+    console.error("Error pushing connections to server:", error);
+  }
+}
+
+
+
+chrome.runtime.onInstalled.addListener(async () => {
+  await fetchConnections()
+  .then(async () => {
+    await pushConnectionsToServer(allConnections);
+  })
+  .catch((error) => {
+    console.error("Error fetching connections:", error);
+  });
 });
