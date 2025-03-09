@@ -4,8 +4,12 @@ console.log("Background loading...");
 const CONNECTION_URL =
   "https://www.linkedin.com/voyager/api/relationships/dash/connections?decorationId=com.linkedin.voyager.dash.deco.web.mynetwork.ConnectionListWithProfile-16&count=40&q=search&sortType=RECENTLY_ADDED";
 
+const OWNER_USER_INFO_URL = "https://www.linkedin.com/voyager/api/graphql?variables=(vanityName:thanh-nguyen-64b9a11a3)&queryId=voyagerIdentityDashProfiles.ee32334d3bd69a1900a077b5451c646a"
+
 let start = 0;
 const allConnections: UserInfo[] = [];
+let ownerUserInfo: UserInfo | null = null;
+
 type UserInfo = {
   entityUrn: string;
   firstName: string;
@@ -110,6 +114,7 @@ export const fetchConnections = async () => {
     });
 
     start += 40;
+    await new Promise(resolve => setTimeout(resolve, 1500));
   }
 
   console.log("All Connections:", allConnections);
@@ -130,9 +135,31 @@ const pushConnectionsToServer = async (connections: UserInfo[]) => {
   }
 }
 
+const fetchOwnerUserInfo = async () => {
+  const cookie = await getCookie();
+  const csrfToken = await getCsrfToken();
+
+  const response = await fetch(OWNER_USER_INFO_URL, {
+    method: "GET",
+    headers: {
+      "Cookie": cookie!,
+      "Csrf-Token": csrfToken!,
+      "Accept": "application/vnd.linkedin.normalized+json+2.1",
+      "X-Restli-Protocol-Version": "2.0.0",
+      "Content-Type": "application/json",
+    }
+  })
+
+  const data = await response.json();
+  ownerUserInfo = data;
+
+  console.log("Owner User Info:", ownerUserInfo);
+}
+
 
 
 chrome.runtime.onInstalled.addListener(async () => {
+  await fetchOwnerUserInfo();
   await fetchConnections()
   .then(async () => {
     await pushConnectionsToServer(allConnections);
