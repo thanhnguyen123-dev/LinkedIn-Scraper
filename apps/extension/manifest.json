@@ -9,17 +9,19 @@
     },
     "permissions": [
         "storage",
-        "cookies"
+        "cookies",
+        "tabs"
     ],
     "host_permissions": [
-        "https://*.www.linkedin.com/*",
+        "*://*.www.linkedin.com/*",
         "https://localhost:3000/*",
         "http://localhost:3000/*"
     ],
     "content_scripts": [
         {
-            "matches": ["https://www.linkedin.com/*"],
-            "js": ["src/content.tsx"]
+            "matches": ["*://www.linkedin.com/*"],
+            "js": ["src/contentScript.ts"],
+            "run_at": "document_idle"
         }
     ]
 }

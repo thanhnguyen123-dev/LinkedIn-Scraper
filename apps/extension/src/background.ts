@@ -4,11 +4,15 @@ console.log("Background loading...");
 const CONNECTION_URL =
   "https://www.linkedin.com/voyager/api/relationships/dash/connections?decorationId=com.linkedin.voyager.dash.deco.web.mynetwork.ConnectionListWithProfile-16&count=40&q=search&sortType=RECENTLY_ADDED";
 
-const OWNER_USER_INFO_URL = "https://www.linkedin.com/voyager/api/graphql?variables=(vanityName:thanh-nguyen-64b9a11a3)&queryId=voyagerIdentityDashProfiles.ee32334d3bd69a1900a077b5451c646a"
+const OWNER_USER_INFO_URL = "https://www.linkedin.com/voyager/api/graphql?variables=(vanityName:identifier)&queryId=voyagerIdentityDashProfiles.ee32334d3bd69a1900a077b5451c646a"
+
+
+
 
 let start = 0;
 const allConnections: UserInfo[] = [];
-let ownerUserInfo: UserInfo | null = null;
+// let ownerUserInfo = null;
+let ownerPublicIdentifier: string | null = null;
 
 type UserInfo = {
   entityUrn: string;
@@ -17,6 +21,14 @@ type UserInfo = {
   headline: string;
   publicIdentifier: string;
 }
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.action === "saveProfile") {
+    const publicIdentifier = message.data.href.split('/in/')[1]?.split('/')[0] || '';
+    ownerPublicIdentifier = publicIdentifier;
+  }
+});
+
 
 const getCookies = async () => {
   return chrome.cookies.getAll({
@@ -139,22 +151,23 @@ const fetchOwnerUserInfo = async () => {
   const cookie = await getCookie();
   const csrfToken = await getCsrfToken();
 
-  const response = await fetch(OWNER_USER_INFO_URL, {
+  const url = OWNER_USER_INFO_URL.replace("identifier", ownerPublicIdentifier!);
+
+
+  const response = await fetch(url, {
     method: "GET",
     headers: {
       "Cookie": cookie!,
       "Csrf-Token": csrfToken!,
       "Accept": "application/vnd.linkedin.normalized+json+2.1",
       "X-Restli-Protocol-Version": "2.0.0",
-      "Content-Type": "application/json",
     }
-  })
+  });
 
   const data = await response.json();
-  ownerUserInfo = data;
-
-  console.log("Owner User Info:", ownerUserInfo);
+  console.log("Owner User Info:", data);
 }
+
 
 
 
